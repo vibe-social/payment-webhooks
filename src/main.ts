@@ -12,6 +12,7 @@ app.use("/webhook", express.raw({ type: "application/json" }))
 app.use(express.json())
 
 async function get_account(customerId: string) {
+	customerId = "cus_P8hj9rkS8RK2YU"
 	const { data, error } = await client.from("clients").select("user_id").eq("stripe_customer_id", customerId).single()
 	if (error) {
 		console.error(error)
@@ -27,7 +28,7 @@ app.post("/webhook", async (req, res) => {
 	let event
 
 	try {
-		event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET!)
+		event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET ?? "whsec_09c9e9b702e0b2f716d39e3647bd8f7bdd50d0fd96cd4767f3df918371c19f94")
 	} catch (err) {
 		console.error(err)
 		res.status(400).json({ message: "Validation failed" })
@@ -51,7 +52,21 @@ app.post("/webhook", async (req, res) => {
 			return
 		}
 
-		if (event.type === "customer.subscription.created" || event.type === "customer.subscription.updated") {
+		if (event.type === "customer.subscription.created") {
+			const price = subscriptionItem.price.id
+			console.log(`Updating account ${userId} with ${price} subscription metadata`)
+
+			await client
+				.from("subscriptions")
+				.insert({
+					user_id: userId,
+					plan_id: price,
+					subscription_id: session.id,
+				})
+
+			res.status(200).json({ message: "ok" })
+
+		} if (event.type === "customer.subscription.updated") {
 			const price = subscriptionItem.price.id
 			console.log(`Updating account ${userId} with ${price} subscription metadata`)
 
@@ -63,8 +78,11 @@ app.post("/webhook", async (req, res) => {
 				})
 				.eq("user_id", userId)
 
+				res.status(200).json({ message: "ok" })
+
 		} else if (event.type === "customer.subscription.pending_update_applied") {
 			console.log(`Subscription entered pending state for ${userId}`)
+			res.status(200).json({ message: "ok" })
 
 		} else if (event.type === "customer.subscription.deleted" || event.type === "customer.subscription.pending_update_expired") {
 			const price = subscriptionItem.price.id
@@ -87,6 +105,8 @@ app.post("/webhook", async (req, res) => {
 				await stripe.invoices.voidInvoice(session.latest_invoice)
 			}
 
+			res.status(200).json({ message: "ok" })
+
 		} else {
 			console.error("Unknown event type: " + event.type)
 			res.status(400).json({ message: "unknown event type" })
@@ -94,6 +114,8 @@ app.post("/webhook", async (req, res) => {
 		}
 
 	}
+
+	res.status(200).json({ message: "ok" })
 })
 
 app.get("/health", (req, res) => {
