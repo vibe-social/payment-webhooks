@@ -26,7 +26,7 @@ app.post("/webhook", async (req, res) => {
 	let event
 
 	try {
-		event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET ?? "whsec_09c9e9b702e0b2f716d39e3647bd8f7bdd50d0fd96cd4767f3df918371c19f94")
+		event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET!)
 	} catch (err) {
 		console.error(err)
 		res.status(400).json({ message: "Validation failed" })
