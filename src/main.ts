@@ -12,7 +12,6 @@ app.use("/webhook", express.raw({ type: "application/json" }))
 app.use(express.json())
 
 async function get_account(customerId: string) {
-	customerId = "cus_P8hj9rkS8RK2YU"
 	const { data, error } = await client.from("clients").select("user_id").eq("stripe_customer_id", customerId).single()
 	if (error) {
 		console.error(error)
@@ -66,7 +65,7 @@ app.post("/webhook", async (req, res) => {
 
 			res.status(200).json({ message: "ok" })
 
-		} if (event.type === "customer.subscription.updated") {
+		} else if (event.type === "customer.subscription.updated") {
 			const price = subscriptionItem.price.id
 			console.log(`Updating account ${userId} with ${price} subscription metadata`)
 
