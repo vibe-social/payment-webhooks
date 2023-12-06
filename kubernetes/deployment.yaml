@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payment-webhooks-deployment
+spec:
+  selector:
+    matchLabels:
+      app: payment-webhooks
+  template:
+    metadata:
+      labels:
+        app: payment-webhooks
+    spec:
+      containers:
+        - name: payment-webhooks
+          image: vibesocial/payment-webhooks:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          env:
+          - name: SUPABASE_URL
+            valueFrom:
+              secretKeyRef:
+                name: secrets
+                key: SUPABASE_URL
+          - name: SUPABASE_ANON_KEY
+            valueFrom:
+              secretKeyRef:
+                name: secrets
+                key: SUPABASE_ANON_KEY
+          - name: DATABASE_URL
+            valueFrom:
+              secretKeyRef:
+                name: secrets
+                key: DATABASE_URL
+          - name: STRIPE_SECRET_KEY
+            valueFrom:
+              secretKeyRef:
+                name: secrets
+                key: STRIPE_SECRET_KEY
+          resources:
+            limits:
+              cpu: "1.0"
+              memory: "1000Mi"
+            requests:
+              cpu: "0.75"
+              memory: "500Mi"
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 5
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 5
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 10
