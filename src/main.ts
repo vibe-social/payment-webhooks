@@ -21,6 +21,7 @@ async function get_account(customerId: string) {
 }
 
 app.post("/webhook", async (req, res) => {
+	console.log("Received webhook")
 	const sig: string = req.headers["stripe-signature"] as string
 
 	let event
