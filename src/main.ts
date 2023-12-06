@@ -112,9 +112,11 @@ app.post("/webhook", async (req, res) => {
 			return
 		}
 
+	} else {
+		console.error("Unknown event type: " + event.type)
+		res.status(400).json({ message: "unknown event type" })
+		return
 	}
-
-	res.status(200).json({ message: "ok" })
 })
 
 app.get("/health", (req, res) => {
