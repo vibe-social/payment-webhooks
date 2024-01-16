@@ -45,11 +45,11 @@ spec:
                 key: STRIPE_WEBHOOK_SECRET
           resources:
             limits:
-              cpu: "1.0"
-              memory: "1000Mi"
+              cpu: "0.1"
+              memory: "512Mi"
             requests:
-              cpu: "0.75"
-              memory: "500Mi"
+              cpu: "0.01"
+              memory: "64Mi"
           readinessProbe:
             httpGet:
               path: /health
