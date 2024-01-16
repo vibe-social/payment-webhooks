@@ -45,7 +45,7 @@ async function get_account(customerId: string) {
 	return data?.user_id
 }
 
-app.post("/webhook", async (req, res) => {
+app.post("/payment-webhooks/stripe", async (req, res) => {
 	console.log("Received webhook")
 	const sig: string = req.headers["stripe-signature"] as string
 
@@ -144,7 +144,7 @@ app.post("/webhook", async (req, res) => {
 	}
 })
 
-app.get("/health", (req, res) => {
+app.get("/payment-webhooks/health", (req, res) => {
 	res.status(200).json({ status: "ok" })
 })
 
