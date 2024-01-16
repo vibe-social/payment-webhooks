@@ -67,5 +67,4 @@ jobs:
           manifests: |
             ./kubernetes/deployment.yaml
             ./kubernetes/service.yaml
-            ./kubernetes/poddistribution.yaml
           images: ${{ env.CONTAINER_NAME }}:${{ github.sha }}
