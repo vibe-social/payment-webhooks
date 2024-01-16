@@ -4,10 +4,35 @@ config()
 import Stripe from "stripe"
 import express from "express"
 import client from "./supabase/client.js"
+import swaggerUi from "swagger-ui-express"
+import swaggerJSDoc from "swagger-jsdoc"
 
 const app = express()
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: "2023-10-16" })
+const swaggerSpec = swaggerJSDoc({
+	definition: {
+		openapi: '3.0.0',
+		info: {
+			title: 'Stripe Webhooks',
+			version: '1.0.0',
+		},
+	},
+	apis: ['dist/main.js'],
+});
 
+app.use('/openapi', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+/**
+ * @openapi
+ * /:
+ *   post:
+ *     description: Stripe webhook endpoint
+ *     responses:
+ *       200:
+ *         description: returns ok
+ *       400:
+ *         description: returns error message
+ */
 app.use("/webhook", express.raw({ type: "application/json" }))
 app.use(express.json())
 
