@@ -20,7 +20,7 @@ const swaggerSpec = swaggerJSDoc({
 	apis: ['dist/main.js'],
 });
 
-app.use('/openapi', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use('/payment-webhooks/openapi', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 /**
  * @openapi
@@ -33,7 +33,7 @@ app.use('/openapi', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
  *       400:
  *         description: returns error message
  */
-app.use("/webhook", express.raw({ type: "application/json" }))
+app.use("/payment-webhooks/stripe", express.raw({ type: "application/json" }))
 app.use(express.json())
 
 async function get_account(customerId: string) {
