@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: payment-webhooks-deployment
+  namespace: vibe-social
 spec:
   selector:
     matchLabels:
@@ -18,31 +19,26 @@ spec:
           ports:
             - containerPort: 8080
           env:
-          - name: SUPABASE_URL
-            valueFrom:
-              secretKeyRef:
-                name: secrets
-                key: SUPABASE_URL
-          - name: SUPABASE_ANON_KEY
-            valueFrom:
-              secretKeyRef:
-                name: secrets
-                key: SUPABASE_ANON_KEY
-          - name: DATABASE_URL
-            valueFrom:
-              secretKeyRef:
-                name: secrets
-                key: DATABASE_URL
-          - name: STRIPE_SECRET_KEY
-            valueFrom:
-              secretKeyRef:
-                name: secrets
-                key: STRIPE_SECRET_KEY
-          - name: STRIPE_WEBHOOK_SECRET
-            valueFrom:
-              secretKeyRef:
-                name: secrets
-                key: STRIPE_WEBHOOK_SECRET
+            - name: SUPABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: SUPABASE_URL
+            - name: SUPABASE_ANON_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: SUPABASE_ANON_KEY
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: DATABASE_URL
+            - name: STRIPE_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: secrets
+                  key: STRIPE_SECRET_KEY
           resources:
             limits:
               cpu: "0.1"
