@@ -2,7 +2,7 @@ name: Build and deploy an app to AKS
 
 on:
   push:
-    branches: ["main"]
+    branches: ["master"]
 
 env:
   CONTAINER_NAME: "vibesocial/payment-webhooks"
